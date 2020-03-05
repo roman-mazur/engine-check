@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"crypto/sha1"
-	"encoding/hex"
 	"flag"
 	"fmt"
 	"github.com/docker/docker/api/types"
@@ -14,17 +12,15 @@ import (
 )
 
 var (
-	apiVersion = flag.String("api-version", "1.35", "docker API version to use")
+	apiVersion  = flag.String("api-version", "1.35", "docker API version to use")
 	overlaysDir = flag.String("overlays-dir", "/var/lib/docker/overlay2", "overlays directory base path")
 
 	skipUnused = flag.Bool("skip-unused", false, "don't print unused overlays")
-	showUsed = flag.Bool("show-used", false, "print overlays usage summary")
-	showAll = flag.Bool("show-all", false, "print all overlay IDs")
+	showUsed   = flag.Bool("show-used", false, "print overlays usage summary")
+	showAll    = flag.Bool("show-all", false, "print all overlay IDs")
 )
 
-func main()  {
-	sum := sha1.Sum([]byte("hello"))
-	fmt.Println(hex.EncodeToString(sum[:]))
+func main() {
 	flag.Parse()
 
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithVersion(*apiVersion))

@@ -11,10 +11,10 @@ import (
 const minIdLength = 12
 
 type overlayUsageInfo struct {
-	overlayId string
-	imageIds []string
-	imageNames []string
-	containerIds []string
+	overlayId      string
+	imageIds       []string
+	imageNames     []string
+	containerIds   []string
 	containerNames []string
 }
 
