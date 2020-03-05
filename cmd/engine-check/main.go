@@ -7,6 +7,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"log"
+	"path"
 	enginecheck "rmazur.io/engine-check"
 	"sort"
 )
@@ -18,6 +19,9 @@ var (
 	skipUnused = flag.Bool("skip-unused", false, "don't print unused overlays")
 	showUsed   = flag.Bool("show-used", false, "print overlays usage summary")
 	showAll    = flag.Bool("show-all", false, "print all overlay IDs")
+
+	genRename = flag.Bool("gen-rename", false, "generate rename instructions for the unused directories")
+	genRemove = flag.Bool("gen-remove", false, "generate remove instructions for the unused directories")
 )
 
 func main() {
@@ -71,8 +75,25 @@ func main() {
 
 		fmt.Println("Unused overlays")
 		fmt.Println("===============")
-		for _, id := range usageData.selectUnused(allIds) {
+		unused := usageData.selectUnused(allIds)
+		for _, id := range unused {
 			fmt.Println(id)
+		}
+		if *genRename {
+			fmt.Println("Rename commands for unused layers")
+			fmt.Println("=================================")
+			for _, id := range unused {
+				absPath := path.Join(*overlaysDir, id)
+				fmt.Printf("mv %s %s-unused\n", absPath, absPath)
+			}
+		}
+		if *genRemove {
+			fmt.Println("Remove commands for unused layers")
+			fmt.Println("=================================")
+			for _, id := range unused {
+				absPath := path.Join(*overlaysDir, id)
+				fmt.Printf("rm -rf %s-unused\n", absPath)
+			}
 		}
 	}
 	if *showAll {
